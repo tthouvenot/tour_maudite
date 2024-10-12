@@ -35,6 +35,7 @@ time.sleep(0.5)
 choice_made = False
 end_of_game = False
 success = False
+fifth_floor = False
 player_stat = {
     "weapon" : "",
     "attack" : 0,
@@ -93,6 +94,7 @@ while not end_of_game:
 
     print("Vous sortez de la cellule et montez au premier étage.")
     print()
+    print('===============================================')
 
     time.sleep(0.5)
 
@@ -114,6 +116,7 @@ while not end_of_game:
     print()
 
     choice_made = False
+    win = False
 
     # The player make the choice between the options
     while not choice_made:
@@ -142,10 +145,10 @@ while not end_of_game:
         
         if user_answer == riddle_answer:
             print("Vous entendez la porte se dévérouiller. Vous vous félicitez.")
+            win = True  
         else: 
             print("Vous entendez un bruit sous vos pieds. Le sol se dérobe, vous tombez dans une fosse à serpent.")
             print("Des milliers de serpents vous attaquent. Vous mourez empoisonné.")
-            end_of_game = True  
 
     # The player chooses the fight
     elif player_choice == 2:
@@ -156,10 +159,10 @@ while not end_of_game:
 
             if weapon_damage == 1:
                 print("Vous assenez un énorme coup sur la porte. Vous n'en faites que des brindilles. QUEL PUISSANCE!")
+                win = True  
             elif weapon_damage == 2:
                 print("Vous assenez un énorme coup sur la porte. Malheureusement elle est trop robuste.")
                 print("L'épée vous revient dessus et vous frappe violament. Vous êtes mort!")
-                end_of_game = True
 
         # The player has wand
         elif player_stat["weapon"] == "baguette":
@@ -167,6 +170,7 @@ while not end_of_game:
 
             if weapon_damage == 1 or weapon_damage == 2 or weapon_damage == 3:
                 print("Vous vous concentrez. Une boule de feu sort de la baguette et pulvérise la porte. QUEL PUISSANCE!")
+                win = True 
             elif weapon_damage == 2:
                 print("Vous vous concentrez. La baguette chauffe terriblement et explose dans votre main.")
                 print("VOUS N'AVEZ PLUS DE MAINS!")
@@ -182,7 +186,6 @@ while not end_of_game:
             print("Vous frappez la porte avec votre bouclier!")
             time.sleep(1.5)
             print("Vous frap... Vous vous effondrez de fatigue et de faim. Vous êtes mort!")
-            end_of_game = True
 
     # The player chooses to find the key
     elif player_choice == 3:
@@ -191,192 +194,140 @@ while not end_of_game:
         if odds_find_key == 1 or odds_find_key == 2:
             print("Un petit tapis de paille se trouve sur le pas de la porte. Vous le soulevez et trouvez la clé. Quel idiot met sa clé sous le tapis.")
             print("Vous insérez la clé dans la serrure et ouvrez la porte")
+            win = True 
         else:
             print("Vous soulevez un pot de fer. ** CLIC **. Le plafond s'effondre sur vous. Vous êtes mort!")
-            end_of_game = True
+    
+    if not win:
+        end_of_game = True
+    else:
+        print()
+        print("Vous sortez et montez à l'étage supérieur")
+        time.sleep(0.5)
+    
+        print('===============================================')
 
-    print()
-    print("Vous sortez et montez à l'étage supérieur")
-    time.sleep(0.5)
+        ############################
+        #                          #
+        #  3rd floor: ghost fight  #
+        #                          #
+        ############################
 
-    ############################
-    #                          #
-    #  3rd floor: ghost fight  #
-    #                          #
-    ############################
+        ghost_stat = {
+            "attack": 8,
+            "defense": 6
+        }
 
-    ghost_stat = {
-        "attack": 8,
-        "defense": 6
-    }
+        print("Vous arrivez dans une grande pièce. Des torches sont accrochées au mur.")
+        time.sleep(0.5)
+        print("En face de vous se trouve la porte entrouverte.")
+        time.sleep(0.5)
+        print(f"Vous avancez prudemment votre {player_stat['weapon']} tendu devant vous.")
+        time.sleep(0.5)
+        print("Un spectre surgit de nulle part et se tient entre vous et la porte.")
+        time.sleep(0.5)
+        print()
 
-    print("Vous arrivez dans une grande pièce. Des torches sont accrochées au mur.")
-    time.sleep(0.5)
-    print("En face de vous se trouve la porte entrouverte.")
-    time.sleep(0.5)
-    print(f"Vous avancez prudemment votre {player_stat['weapon']} tendu devant vous.")
-    time.sleep(0.5)
-    print("Un spectre surgit de nulle part et se tient entre vous et la porte.")
-    time.sleep(0.5)
-    print()
+        end_of_fight = False
+        win = False
 
-    end_of_fight = False
-    win = False
+        def fight(player_stat, ghost_stat):
 
-    def fight(player_stat, ghost_stat):
+            result = player_stat - ghost_stat
 
-        result = player_stat - ghost_stat
+            if result > 0:
+                return True
+            else:
+                return False
 
-        if result > 0:
-            return True
-        else:
-            return False
-
-    # Fight loop against the ghost
-    while not end_of_fight:
-        
-        # Fight with the sword
-        if player_stat["weapon"] == "épée":
+        # Fight loop against the ghost
+        while not end_of_fight:
             
-            print("Dans un réflexe héroïque, vous attaquez le spectre.")
-            time.sleep(0.5)
-            fight_result = fight(player_stat["attack"], ghost_stat["defense"])
-
-            if fight_result:
-                print(f"Votre {player_stat['weapon']} transperce l'ectoplasme et tue le revenant.")
-                time.sleep(0.5)
-                print("Vous courez vers la porte")
-                time.sleep(0.5)
-                print()
-                win = True
-                end_of_fight = True
-
-        # Fight wiht the wand
-        elif player_stat["weapon"] == "baguette":
-            
-            print("Vous vous concentrez.")
-            time.sleep(0.5)
-            random_spell = random.randint(1, 4)
-
-            # Use the first spell: Fire Ball
-            if random_spell == 1:
+            # Fight with the sword
+            if player_stat["weapon"] == "épée":
                 
+                print("Dans un réflexe héroïque, vous attaquez le spectre.")
+                time.sleep(0.5)
                 fight_result = fight(player_stat["attack"], ghost_stat["defense"])
 
                 if fight_result:
-                    print(f"Vous lancez une {list(player_stat['spells'].keys())[0]}.")
+                    print(f"Votre {player_stat['weapon']} transperce l'ectoplasme et tue le revenant.")
                     time.sleep(0.5)
-                    print("Elle atteint votre ennemie qui disparaît dans les ténèbres.")
+                    print("Vous courez vers la porte")
                     time.sleep(0.5)
                     print()
                     win = True
-                    end_of_fight = True 
-
-                else:
-                    print(f"Une {list(player_stat['spells'].keys())[0]} sort de la baguette.")
-                    time.sleep(0.5)
-                    print("Elle traverse le spectre.")
-                    time.sleep(0.5)
-                    print("Surpris, vous ne voyez pas arriver l'attaque du spectre.")
-                    time.sleep(0.5)
-                    print(f"Il vous inflige {ghost_stat['attack']} points de dégât.")
-                    time.sleep(0.5)
-                    print("Vous tombez au combat. Vous êtes mort.")
-                    time.sleep(0.5)
-                    print()
                     end_of_fight = True
 
-            # Use the second spell: Defense boost
-            elif random_spell == 2:
-                print("Vous sentez la puissance de la baguette s'activer.")
-                time.sleep(0.5)
-                print("Une aura de lumière vous entoure.")
-                time.sleep(0.5)
-
-                fight_result = fight(player_stat["defense"] * 2, ghost_stat["attack"])
-
-                if fight_result:
-                    print("Le spectre se lance et vous attaque.")
-                    time.sleep(0.5)
-                    print("Votre bouclier de lumière vous as protégé.")
-                    time.sleep(0.5)
-                    print()
-
-            # Use the third spell: Attack Boost
-            elif random_spell == 3:
-                print("Vous sentez la puissance de la baguette s'activer.")
-                time.sleep(0.5)
-                print("Votre main s'entour d'une aura rouge")
-                time.sleep(0.5)
-
-                player_stat["attack"] *= 2
-
-            # The spell doesn't work
-            elif random_spell == 4:
-                print("Face à la vision de cette horreur, vous perdez la raison.")
-                time.sleep(0.5)
-                print("Le spectre vous attaque!!!")
-                time.sleep(0.5)
-
-                fight_result = fight(player_stat["defense"] * 2, ghost_stat["attack"])
+            # Fight wiht the wand
+            elif player_stat["weapon"] == "baguette":
                 
-                if not fight_result:
-                    print(f"Il vous inflige {ghost_stat['attack']} points de dégât.")
-                    time.sleep(0.5)
-                    print("Vous tombez au combat. Vous êtes mort.")
-                    time.sleep(0.5)
-                    print()
-                    end_of_fight = True
-
-        # Fight with the shield
-        elif player_stat["weapon"] == "bouclier":
-
-            print("Le spectre vous attaque!!!")
-            time.sleep(0.5)
-            
-            fight_result = fight(player_stat["defense"], ghost_stat["attack"])
-            
-            if fight_result:
-                print("En voyant de spectre vous avez le réflexe de lever votre bouclier pour vous protéger!")
+                print("Vous vous concentrez.")
                 time.sleep(0.5)
+                random_spell = random.randint(1, 4)
 
-            print("Vous observez la salle et voyez deux solutions:")
-            print("     1. Prendre une torche et la lancer sur le spectre")
-            print("     2. Courir droit sur la porte")
+                # Use the first spell: Fire Ball
+                if random_spell == 1:
+                    
+                    fight_result = fight(player_stat["attack"], ghost_stat["defense"])
 
-            choice_made = False
+                    if fight_result:
+                        print(f"Vous lancez une {list(player_stat['spells'].keys())[0]}.")
+                        time.sleep(0.5)
+                        print("Elle atteint votre ennemie qui disparaît dans les ténèbres.")
+                        time.sleep(0.5)
+                        print()
+                        win = True
+                        end_of_fight = True 
 
-            # The player make the choice between the options
-            while not choice_made:
-                
-                try:
-                    player_choice = int(input("Quelle solution choisissez-vous? "))
-
-                    if player_choice <= 0 or player_choice > 2:
-                        print("Vous trouvez un petit cailloux par terre et le lancez contre la porte. Les dieux se moquent de vous. Choisissez entre 1, 2")
                     else:
-                        choice_made = True
-                except ValueError:
-                    print("Vous tournez en rond cherchant une solution, alors qu'il suffit de choisir entre 1, 2")
+                        print(f"Une {list(player_stat['spells'].keys())[0]} sort de la baguette.")
+                        time.sleep(0.5)
+                        print("Elle traverse le spectre.")
+                        time.sleep(0.5)
+                        print("Surpris, vous ne voyez pas arriver l'attaque du spectre.")
+                        time.sleep(0.5)
+                        print(f"Il vous inflige {ghost_stat['attack']} points de dégât.")
+                        time.sleep(0.5)
+                        print("Vous tombez au combat. Vous êtes mort.")
+                        time.sleep(0.5)
+                        print()
+                        end_of_fight = True
 
-            # Throw the torch choice
-            if player_choice == 1:
-                print("vous saisissez la torche et la lancé sur le spectre")
-                time.sleep(0.5)
-                odds_to_win = random.randint(1,10)
-                
-                # Throw succeed
-                if odds_to_win == 1 or odds_to_win == 2 or odds_to_win == 3:
-                    print("Votre dextérité vous a réussi, le spectre prend feu.")
-                    win = True
-                    end_of_fight = True
+                # Use the second spell: Defense boost
+                elif random_spell == 2:
+                    print("Vous sentez la puissance de la baguette s'activer.")
+                    time.sleep(0.5)
+                    print("Une aura de lumière vous entoure.")
+                    time.sleep(0.5)
 
-                # Throw failed
-                else:
-                    print("Au moment de saisir la torche le spectre vous attaque")
+                    fight_result = fight(player_stat["defense"] * 2, ghost_stat["attack"])
 
-                    fight_result = fight(player_stat["defense"] - 5, ghost_stat["attack"])
+                    if fight_result:
+                        print("Le spectre se lance et vous attaque.")
+                        time.sleep(0.5)
+                        print("Votre bouclier de lumière vous as protégé.")
+                        time.sleep(0.5)
+                        print()
 
+                # Use the third spell: Attack Boost
+                elif random_spell == 3:
+                    print("Vous sentez la puissance de la baguette s'activer.")
+                    time.sleep(0.5)
+                    print("Votre main s'entour d'une aura rouge")
+                    time.sleep(0.5)
+
+                    player_stat["attack"] *= 2
+
+                # The spell doesn't work
+                elif random_spell == 4:
+                    print("Face à la vision de cette horreur, vous perdez la raison.")
+                    time.sleep(0.5)
+                    print("Le spectre vous attaque!!!")
+                    time.sleep(0.5)
+
+                    fight_result = fight(player_stat["defense"], ghost_stat["attack"])
+                    
                     if not fight_result:
                         print(f"Il vous inflige {ghost_stat['attack']} points de dégât.")
                         time.sleep(0.5)
@@ -385,282 +336,348 @@ while not end_of_game:
                         print()
                         end_of_fight = True
 
-            # Run choice
-            elif player_choice == 2:
-                print("vous choisissez de courir vers la porte en traversant le spectre")
+            # Fight with the shield
+            elif player_stat["weapon"] == "bouclier":
+
+                print("Le spectre vous attaque!!!")
                 time.sleep(0.5)
-                odds_to_win = random.randint(1,2)
-
-                # Run succeed
-                if odds_to_win == 1:
-                    print("Vous êtes assez vif et rapide pour atteindre la porte sans problème.")
-                    win = True
-                    end_of_fight = True
-
-                # Run failed
-                elif odds_to_win == 2:
-                    print("Au moment de traverser le spectre vous suffoquez et vous noyez dans l'ectoplasme. Vous êtes mort!")
-                    end_of_fight = True
                 
+                fight_result = fight(player_stat["defense"], ghost_stat["attack"])
+                
+                if fight_result:
+                    print("En voyant de spectre vous avez le réflexe de lever votre bouclier pour vous protéger!")
+                    time.sleep(0.5)
 
-    # End of game if player doesn't win
-    if not win:
-        end_of_game = True
+                print("Vous observez la salle et voyez deux solutions:")
+                print("     1. Prendre une torche et la lancer sur le spectre")
+                print("     2. Courir droit sur la porte")
 
-    print("Une fois la porte atteinte vous l'ouvrez et montez à l'étage!")
-    print()
+                choice_made = False
 
-    ############################
-    #                          #
-    #  4th floor: mirror room  #
-    #                          #
-    ############################
-            
-    print("Vous arrivez dans une pièce orné d'ambre.")
-    time.sleep(0.5)
-    print("En face de vous se trouve une porte avec un mirroir.")
-    time.sleep(0.5)
-    print("En vous apporchant une voix se fait entendre.")
-    time.sleep(0.5)
-    print("Si ton destin est de passer cette porte alors tu répondras correctement à cette énigme.")
-    time.sleep(0.5)
-    print("Je suis toujours devant toi, mais tu ne peux jamais me dépasser. Qui suis-je?")
-    time.sleep(0.5)
-    print("     1. Le futur")
-    print("     2. Le chemin")
-    print("     3. Ton ombre")
+                # The player make the choice between the options
+                while not choice_made:
+                    
+                    try:
+                        player_choice = int(input("Quelle solution choisissez-vous? "))
 
-    choice_made = False
+                        if player_choice <= 0 or player_choice > 2:
+                            print("Vous trouvez un petit cailloux par terre et le lancez contre la porte. Les dieux se moquent de vous. Choisissez entre 1, 2")
+                        else:
+                            choice_made = True
+                    except ValueError:
+                        print("Vous tournez en rond cherchant une solution, alors qu'il suffit de choisir entre 1, 2")
 
-    # Player have to choose between options
-    while not choice_made:
+                # Throw the torch choice
+                if player_choice == 1:
+                    print("vous saisissez la torche et la lancé sur le spectre")
+                    time.sleep(0.5)
+                    odds_to_win = random.randint(1,10)
+                    
+                    # Throw succeed
+                    if odds_to_win == 1 or odds_to_win == 2 or odds_to_win == 3:
+                        print("Votre dextérité vous a réussi, le spectre prend feu.")
+                        win = True
+                        end_of_fight = True
 
-        try:
-            user_choice = int(input("Quelle est ta réponse? "))
+                    # Throw failed
+                    else:
+                        print("Au moment de saisir la torche le spectre vous attaque")
 
-            if user_choice <= 0 or user_choice > 3:
-                print("Je perds patience. Choisis 1, 2 ou 3")
-            else:
-                choice_made = True
+                        fight_result = fight(player_stat["defense"] - 5, ghost_stat["attack"])
 
-        except ValueError:
-            print("Je perds patience. Choisis 1, 2 ou 3")
+                        if not fight_result:
+                            print(f"Il vous inflige {ghost_stat['attack']} points de dégât.")
+                            time.sleep(0.5)
+                            print("Vous tombez au combat. Vous êtes mort.")
+                            time.sleep(0.5)
+                            print()
+                            end_of_fight = True
 
-    # Futur choice: End of game
-    if user_choice == 1:
-        time.sleep(0.5)
-        print("Tel est ton choix.")
-        time.sleep(0.5)
-        print("Voici ton avenir")
-        time.sleep(0.5)
-        print("Vous voyez dans le miroir une ombre apparaître. C'est vous")
-        time.sleep(0.5)
-        print("Vous montez les marches et un énorme rocher dévale les escaliers et vous écrase.")
-        time.sleep(0.5)
-        print("Vous prenez peur et faites demi-tour.")
-        time.sleep(0.5)
-        print("Malheureusement ne trouvant pas d'autres issues, vous mourez de faim!")
-        time.sleep(0.5)
-        end_of_game = True
+                # Run choice
+                elif player_choice == 2:
+                    print("vous choisissez de courir vers la porte en traversant le spectre")
+                    time.sleep(0.5)
+                    odds_to_win = random.randint(1,2)
 
-    # Path choice: good choice
-    elif user_choice == 2:
-        time.sleep(0.5)
-        print("Bravo, ton destin est d'atteindre le prochain étage")
-        time.sleep(0.5)
-        print("Vous entendez un mécanisme s'enclencher.")
-        time.sleep(0.5)
-        print("La porte d'ouvre!")
-        time.sleep(0.5)
+                    # Run succeed
+                    if odds_to_win == 1:
+                        print("Vous êtes assez vif et rapide pour atteindre la porte sans problème.")
+                        win = True
+                        end_of_fight = True
 
-    # Shadow choice: loop choice, end of game
-    elif user_choice == 3:
+                    # Run failed
+                    elif odds_to_win == 2:
+                        print("Au moment de traverser le spectre vous suffoquez et vous noyez dans l'ectoplasme. Vous êtes mort!")
+                        end_of_fight = True
+                    
 
-        end_countdown = 4
+        # End of game if player doesn't win
+        if not win:
+            end_of_game = True
+        else:
+            print("Une fois la porte atteinte vous l'ouvrez et montez à l'étage!")
+            print()
+        
+            print('===============================================')
 
-        while end_countdown != 0:
-
+        ############################
+        #                          #
+        #  4th floor: mirror room  #
+        #                          #
+        ############################
+                
+            print("Vous arrivez dans une pièce orné d'ambre.")
+            time.sleep(0.5)
+            print("En face de vous se trouve une porte avec un mirroir.")
+            time.sleep(0.5)
+            print("En vous apporchant une voix se fait entendre.")
+            time.sleep(0.5)
+            print("Si ton destin est de passer cette porte alors tu répondras correctement à cette énigme.")
+            time.sleep(0.5)
             print("Je suis toujours devant toi, mais tu ne peux jamais me dépasser. Qui suis-je?")
             time.sleep(0.5)
             print("     1. Le futur")
             print("     2. Le chemin")
             print("     3. Ton ombre")
 
-            end_countdown -= 1
-        
-        time.sleep(0.5)
-        print("Tu deviens fou et meurt")
-        end_of_game = True
+            choice_made = False
+            win = False
 
-    print("Vous traversez la porte et montez à l'étage suivant")
-    print()
-    time.sleep(0.5)
+            # Player have to choose between options
+            while not choice_made:
 
-    ##############################
-    #                            #
-    #  5th floor: roof guardian  #
-    #                            #
-    ##############################
+                try:
+                    user_choice = int(input("Quelle est ta réponse? "))
 
-    print("Vous arrivez dans une très grande salle")
-    time.sleep(0.5)
-    print("Au centre se trouve un trône sur lequel est assis une étrange créature.")
-    time.sleep(0.5)
-    print("Sur sa droite vous voyez 3 portes portes.")
-    time.sleep(0.5)
-    print("Vous vous approchez. Non sans crainte.")
-    time.sleep(0.5)
+                    if user_choice <= 0 or user_choice > 3:
+                        print("Je perds patience. Choisis 1, 2 ou 3")
+                    else:
+                        choice_made = True
 
-    print("La créature se lève et s'adresse à vous:")
-    time.sleep(0.5)
+                except ValueError:
+                    print("Je perds patience. Choisis 1, 2 ou 3")
 
-    print("Bravo d'être arrivé jusqu'ici. Tu as déjoué tous mes pièges")
-    time.sleep(0.5)
-    print("Je t'offre un dernier choix.")
-    time.sleep(0.5)
-    print("Vous remarquez que les portes ont changé")
-    time.sleep(0.5)
+            # Futur choice: End of game
+            if user_choice == 1:
+                time.sleep(0.5)
+                print("Tel est ton choix.")
+                time.sleep(0.5)
+                print("Voici ton avenir")
+                time.sleep(0.5)
+                print("Vous voyez dans le miroir une ombre apparaître. C'est vous")
+                time.sleep(0.5)
+                print("Vous montez les marches et un énorme rocher dévale les escaliers et vous écrase.")
+                time.sleep(0.5)
+                print("Vous prenez peur et faites demi-tour.")
+                time.sleep(0.5)
+                print("Malheureusement ne trouvant pas d'autres issues, vous mourez de faim!")
+                time.sleep(0.5)
 
-    print("Tu as le choix entre:")
-    print("     1. La porte enflammée")
-    print("     2. La porte glacée")
-    print("     3. La porte d'ombre")
+            # Path choice: good choice
+            elif user_choice == 2:
+                time.sleep(0.5)
+                print("Bravo, ton destin est d'atteindre le prochain étage")
+                time.sleep(0.5)
+                print("Vous entendez un mécanisme s'enclencher.")
+                time.sleep(0.5)
+                print("La porte d'ouvre!")
+                time.sleep(0.5)
+                win = True
 
-    choice_made = False
-    fifth_floor = True
+            # Shadow choice: loop choice, end of game
+            elif user_choice == 3:
 
-    # Player have to choose between 3 doors
-    while not choice_made:
+                end_countdown = 4
 
-        try:
-            user_choice = int(input("Quel est ton choix? "))
-            print()
-            time.sleep(0.5)
+                while end_countdown != 0:
 
-            if user_choice <= 0 or user_choice > 3:
-                print("Il n'y a pas de porte caché. Si tu veux sortir c'est une des 3 portes.")
+                    print("Je suis toujours devant toi, mais tu ne peux jamais me dépasser. Qui suis-je?")
+                    time.sleep(0.5)
+                    print("     1. Le futur")
+                    print("     2. Le chemin")
+                    print("     3. Ton ombre")
+
+                    end_countdown -= 1
+                
+                time.sleep(0.5)
+                print("Tu deviens fou et meurt")
+
+            if not win:
+                end_of_game = True
             else:
-                choice_made = True
-        except ValueError:
-            print("N'abuse pas de ma patience. Tu choisis la porte 1, 2 ou 3")
+                print("Vous traversez la porte et montez à l'étage suivant")
+                print()
+                time.sleep(0.5)
+    
+                print('===============================================')
 
-    # Flamed door
-    if user_choice == 1:
-        
-        # Player has sword
-        if player_stat["weapon"] == "épée":
-            
-            print("Vous avancez vers la porte enflammée.")
-            time.sleep(0.5)
-            print("Vous prenez une grande inspiration, levez votre arme et assenez un coup puissant")
-            time.sleep(0.5)
-            print("Les flammes se dissipe un court instant")
-            time.sleep(0.5)
-            print("Vous profitez de cette opportunité pour passer la porte et sortir.")
-            time.sleep(0.5)
-            print()
-            success = True
-            end_of_game = True
+            ##############################
+            #                            #
+            #  5th floor: roof guardian  #
+            #                            #
+            ##############################
 
-        # Player has wand
-        elif player_stat["weapon"] == "baguette":
-            
-            print("Vous avancez vers la porte enflammée.")
-            time.sleep(0.5)
-            print("Vous essayez de lancer un sort. Malgré tous vos efforts, rien ne bouge!")
-            time.sleep(0.5)
-            print()
-            end_of_game = True
+                print("Vous arrivez dans une très grande salle")
+                time.sleep(0.5)
+                print("Au centre se trouve un trône sur lequel est assis une étrange créature.")
+                time.sleep(0.5)
+                print("Sur sa droite vous voyez 3 portes portes.")
+                time.sleep(0.5)
+                print("Vous vous approchez. Non sans crainte.")
+                time.sleep(0.5)
 
-        # Player has shield
-        elif player_stat["weapon"] == "bouclier":
-            
-            print("Vous avancez vers la porte enflammée.")
-            time.sleep(0.5)
-            print(f"Vous placez votre {player_stat['weapon']} devant vous et avancez.")
-            time.sleep(0.5)
-            print("Malheureusement il est fait de bois et prend feu!")
-            time.sleep(0.5)
-            print()
-            end_of_game = True
+                print("La créature se lève et s'adresse à vous:")
+                time.sleep(0.5)
 
-    # Iced door
-    elif user_choice == 2:
+                print("Bravo d'être arrivé jusqu'ici. Tu as déjoué tous mes pièges")
+                time.sleep(0.5)
+                print("Je t'offre un dernier choix.")
+                time.sleep(0.5)
+                print("Vous remarquez que les portes ont changé")
+                time.sleep(0.5)
 
-        # Player has sword
-        if player_stat["weapon"] == "épée":
-            
-            print("Vous avancez vers la porte glacée.")
-            time.sleep(0.5)
-            print("Vous prenez une grande inspiration, levez votre arme et assenez un coup puissant")
-            time.sleep(0.5)
-            print("Votre épée se brise en mille morceaux")
-            time.sleep(0.5)
-            print()
-            end_of_game = True
+                print("Tu as le choix entre:")
+                print("     1. La porte enflammée")
+                print("     2. La porte glacée")
+                print("     3. La porte d'ombre")
 
-        # Player has wand
-        elif player_stat["weapon"] == "baguette":
-            
-            print("Vous avancez vers la porte glacée.")
-            time.sleep(0.5)
-            print("Vous essayez de lancer un sort. Malgré tous vos efforts, rien ne bouge!")
-            time.sleep(0.5)
-            print()
-            end_of_game = True
+                choice_made = False
+                fifth_floor = True
 
-        # Player has shield
-        elif player_stat["weapon"] == "bouclier":
-            
-            print("Vous avancez vers la porte glacée.")
-            time.sleep(0.5)
-            print(f"Vous placez votre {player_stat['weapon']} devant vous et avancez.")
-            time.sleep(0.5)
-            print("Quelle magie. Votre bouclier vous offre une petite faille et vous traversez la porte pour sortir.")
-            time.sleep(0.5)
-            print()
-            success = True
-            end_of_game = True
+                # Player have to choose between 3 doors
+                while not choice_made:
 
-    # Shadowed door
-    elif user_choice == 3:
+                    try:
+                        user_choice = int(input("Quel est ton choix? "))
+                        print()
+                        time.sleep(0.5)
 
-        # Player has sword
-        if player_stat["weapon"] == "épée":
-            
-            print("Vous avancez vers la porte d'ombre.")
-            time.sleep(0.5)
-            print("Vous prenez une grande inspiration, levez votre arme et assenez un coup puissant")
-            time.sleep(0.5)
-            print("Votre épée se fait aspirer dans vide sidérale")
-            time.sleep(0.5)
-            print()
-            end_of_game = True
+                        if user_choice <= 0 or user_choice > 3:
+                            print("Il n'y a pas de porte caché. Si tu veux sortir c'est une des 3 portes.")
+                        else:
+                            choice_made = True
+                    except ValueError:
+                        print("N'abuse pas de ma patience. Tu choisis la porte 1, 2 ou 3")
 
-        # Player has wand
-        elif player_stat["weapon"] == "baguette":
-            
-            print("Vous avancez vers la porte d'ombre.")
-            time.sleep(0.5)
-            print("Vous essayez de lancer un sort. Les ombres se dissipent et vous voyez la sortie.")
-            time.sleep(0.5)
-            print("Vous traversez la porte et sortez.")
-            time.sleep(0.5)
-            print()
-            success = True
-            end_of_game = True
+                # Flamed door
+                if user_choice == 1:
+                    
+                    # Player has sword
+                    if player_stat["weapon"] == "épée":
+                        
+                        print("Vous avancez vers la porte enflammée.")
+                        time.sleep(0.5)
+                        print("Vous prenez une grande inspiration, levez votre arme et assenez un coup puissant")
+                        time.sleep(0.5)
+                        print("Les flammes se dissipe un court instant")
+                        time.sleep(0.5)
+                        print("Vous profitez de cette opportunité pour passer la porte et sortir.")
+                        time.sleep(0.5)
+                        print()
+                        success = True
+                        end_of_game = True
 
-        # Player has shield
-        elif player_stat["weapon"] == "bouclier":
-            
-            print("Vous avancez vers la porte d'ombre.")
-            time.sleep(0.5)
-            print(f"Vous placez votre {player_stat['weapon']} devant vous et avancez.")
-            time.sleep(0.5)
-            print("Malheureusement vous vous faites aspirez dans le vide et réapparaissez devant le gardien.")
-            time.sleep(0.5)
-            print()
-            end_of_game = True
+                    # Player has wand
+                    elif player_stat["weapon"] == "baguette":
+                        
+                        print("Vous avancez vers la porte enflammée.")
+                        time.sleep(0.5)
+                        print("Vous essayez de lancer un sort. Malgré tous vos efforts, rien ne bouge!")
+                        time.sleep(0.5)
+                        print()
+                        end_of_game = True
+
+                    # Player has shield
+                    elif player_stat["weapon"] == "bouclier":
+                        
+                        print("Vous avancez vers la porte enflammée.")
+                        time.sleep(0.5)
+                        print(f"Vous placez votre {player_stat['weapon']} devant vous et avancez.")
+                        time.sleep(0.5)
+                        print("Malheureusement il est fait de bois et prend feu!")
+                        time.sleep(0.5)
+                        print()
+                        end_of_game = True
+
+                # Iced door
+                elif user_choice == 2:
+
+                    # Player has sword
+                    if player_stat["weapon"] == "épée":
+                        
+                        print("Vous avancez vers la porte glacée.")
+                        time.sleep(0.5)
+                        print("Vous prenez une grande inspiration, levez votre arme et assenez un coup puissant")
+                        time.sleep(0.5)
+                        print("Votre épée se brise en mille morceaux")
+                        time.sleep(0.5)
+                        print()
+                        end_of_game = True
+
+                    # Player has wand
+                    elif player_stat["weapon"] == "baguette":
+                        
+                        print("Vous avancez vers la porte glacée.")
+                        time.sleep(0.5)
+                        print("Vous essayez de lancer un sort. Malgré tous vos efforts, rien ne bouge!")
+                        time.sleep(0.5)
+                        print()
+                        end_of_game = True
+
+                    # Player has shield
+                    elif player_stat["weapon"] == "bouclier":
+                        
+                        print("Vous avancez vers la porte glacée.")
+                        time.sleep(0.5)
+                        print(f"Vous placez votre {player_stat['weapon']} devant vous et avancez.")
+                        time.sleep(0.5)
+                        print("Quelle magie. Votre bouclier vous offre une petite faille et vous traversez la porte pour sortir.")
+                        time.sleep(0.5)
+                        print()
+                        success = True
+                        end_of_game = True
+
+                # Shadowed door
+                elif user_choice == 3:
+
+                    # Player has sword
+                    if player_stat["weapon"] == "épée":
+                        
+                        print("Vous avancez vers la porte d'ombre.")
+                        time.sleep(0.5)
+                        print("Vous prenez une grande inspiration, levez votre arme et assenez un coup puissant")
+                        time.sleep(0.5)
+                        print("Votre épée se fait aspirer dans vide sidérale")
+                        time.sleep(0.5)
+                        print()
+                        end_of_game = True
+
+                    # Player has wand
+                    elif player_stat["weapon"] == "baguette":
+                        
+                        print("Vous avancez vers la porte d'ombre.")
+                        time.sleep(0.5)
+                        print("Vous essayez de lancer un sort. Les ombres se dissipent et vous voyez la sortie.")
+                        time.sleep(0.5)
+                        print("Vous traversez la porte et sortez.")
+                        time.sleep(0.5)
+                        print()
+                        success = True
+                        end_of_game = True
+
+                    # Player has shield
+                    elif player_stat["weapon"] == "bouclier":
+                        
+                        print("Vous avancez vers la porte d'ombre.")
+                        time.sleep(0.5)
+                        print(f"Vous placez votre {player_stat['weapon']} devant vous et avancez.")
+                        time.sleep(0.5)
+                        print("Malheureusement vous vous faites aspirez dans le vide et réapparaissez devant le gardien.")
+                        time.sleep(0.5)
+                        print()
+                        end_of_game = True
+    
+                print('===============================================')
 
 #################
 #               #
